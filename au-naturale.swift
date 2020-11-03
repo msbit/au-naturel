@@ -12,11 +12,11 @@ let port = CGEvent.tapCreate(
 
     let pointDelta = event.getIntegerValueField(.scrollWheelEventPointDeltaAxis1)
     let delta = event.getIntegerValueField(.scrollWheelEventDeltaAxis1)
-    let fixedPtDelta = event.getDoubleValueField(.scrollWheelEventFixedPtDeltaAxis1)
+    let fixedPtDelta = event.getIntegerValueField(.scrollWheelEventFixedPtDeltaAxis1)
 
     event.setIntegerValueField(.scrollWheelEventPointDeltaAxis1, value: -pointDelta)
     event.setIntegerValueField(.scrollWheelEventDeltaAxis1, value: -delta)
-    event.setDoubleValueField(.scrollWheelEventFixedPtDeltaAxis1, value: -fixedPtDelta)
+    event.setIntegerValueField(.scrollWheelEventFixedPtDeltaAxis1, value: -fixedPtDelta)
 
     return Unmanaged.passUnretained(event)
   },
