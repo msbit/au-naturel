@@ -43,6 +43,19 @@ guard let loop = CFRunLoopGetCurrent() else {
 CFRunLoopAddSource(loop, loopSource, .commonModes)
 CGEvent.tapEnable(tap: port, enable: true)
 
+signal(SIGINFO, SIG_IGN)
+let infoSource = DispatchSource.makeSignalSource(signal: SIGINFO, queue: .main)
+infoSource.setEventHandler {
+  if CGEvent.tapIsEnabled(tap: port) {
+    print("disabling tap")
+    CGEvent.tapEnable(tap: port, enable: false)
+  } else {
+    print("enabling tap")
+    CGEvent.tapEnable(tap: port, enable: true)
+  }
+}
+infoSource.activate()
+
 signal(SIGINT, SIG_IGN)
 let intSource = DispatchSource.makeSignalSource(signal: SIGINT, queue: .main)
 intSource.setEventHandler {
