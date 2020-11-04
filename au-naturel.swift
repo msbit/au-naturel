@@ -30,8 +30,16 @@ guard let port = port else {
 
 print("tap created")
 
-let loopSource = CFMachPortCreateRunLoopSource(nil, port, 0)
-let loop = CFRunLoopGetCurrent()
+guard let loopSource = CFMachPortCreateRunLoopSource(nil, port, 0) else {
+  print("can't create run loop source")
+  exit(1)
+}
+
+guard let loop = CFRunLoopGetCurrent() else {
+  print("can't get current loop")
+  exit(1)
+}
+
 CFRunLoopAddSource(loop, loopSource, .commonModes)
 CGEvent.tapEnable(tap: port, enable: true)
 
