@@ -38,19 +38,19 @@ let port = CGEvent.tapCreate(
 
 guard let port = port else {
     print("can't create tap")
-    exit(1)
+    exit(EXIT_FAILURE)
 }
 
 print("tap created")
 
 guard let loopSource = CFMachPortCreateRunLoopSource(nil, port, 0) else {
     print("can't create run loop source")
-    exit(1)
+    exit(EXIT_FAILURE)
 }
 
 guard let loop = CFRunLoopGetCurrent() else {
     print("can't get current loop")
-    exit(1)
+    exit(EXIT_FAILURE)
 }
 
 CFRunLoopAddSource(loop, loopSource, .commonModes)
@@ -74,3 +74,5 @@ configureSignal(signal: SIGINT) {
 CFRunLoopRun()
 
 print("finishing up")
+
+exit(EXIT_SUCCESS)
