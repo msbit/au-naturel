@@ -43,10 +43,13 @@ guard let loop = CFRunLoopGetCurrent() else {
 CFRunLoopAddSource(loop, loopSource, .commonModes)
 CGEvent.tapEnable(tap: port, enable: true)
 
-signal(SIGINT) { s in
+signal(SIGINT, SIG_IGN)
+let intSource = DispatchSource.makeSignalSource(signal: SIGINT, queue: .main)
+intSource.setEventHandler {
   print("stopping run loop")
   CFRunLoopStop(loop)
 }
+intSource.activate()
 
 CFRunLoopRun()
 
