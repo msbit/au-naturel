@@ -14,6 +14,11 @@ func configureSignal(signal _signal: Int32, handler: @escaping () -> Void) {
     signalSources.updateValue(signalSource, forKey: _signal)
 }
 
+guard let loop = CFRunLoopGetCurrent() else {
+    print("can't get current loop")
+    exit(EXIT_FAILURE)
+}
+
 guard let port = CGEvent.tapCreate(
     tap: .cgSessionEventTap,
     place: .tailAppendEventTap,
@@ -43,11 +48,6 @@ print("tap created")
 
 guard let loopSource = CFMachPortCreateRunLoopSource(nil, port, 0) else {
     print("can't create run loop source")
-    exit(EXIT_FAILURE)
-}
-
-guard let loop = CFRunLoopGetCurrent() else {
-    print("can't get current loop")
     exit(EXIT_FAILURE)
 }
 
