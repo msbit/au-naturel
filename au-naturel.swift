@@ -1,6 +1,19 @@
 import CoreGraphics
 import Darwin
 
+var signalSources: Dictionary<Int32, DispatchSourceSignal> = [:]
+
+func configureSignal(signal _signal: Int32, handler: @escaping () -> ()) {
+  signal(_signal, SIG_IGN)
+
+  let signalSource = DispatchSource.makeSignalSource(signal: _signal, queue: .main)
+
+  signalSource.setEventHandler(handler: handler)
+  signalSource.activate()
+
+  signalSources.updateValue(signalSource, forKey: _signal)
+}
+
 let port = CGEvent.tapCreate(
   tap: .cgSessionEventTap,
   place: .tailAppendEventTap,
@@ -43,9 +56,7 @@ guard let loop = CFRunLoopGetCurrent() else {
 CFRunLoopAddSource(loop, loopSource, .commonModes)
 CGEvent.tapEnable(tap: port, enable: true)
 
-signal(SIGINFO, SIG_IGN)
-let infoSource = DispatchSource.makeSignalSource(signal: SIGINFO, queue: .main)
-infoSource.setEventHandler {
+configureSignal(signal: SIGINFO) {
   if CGEvent.tapIsEnabled(tap: port) {
     print("disabling tap")
     CGEvent.tapEnable(tap: port, enable: false)
@@ -54,15 +65,11 @@ infoSource.setEventHandler {
     CGEvent.tapEnable(tap: port, enable: true)
   }
 }
-infoSource.activate()
 
-signal(SIGINT, SIG_IGN)
-let intSource = DispatchSource.makeSignalSource(signal: SIGINT, queue: .main)
-intSource.setEventHandler {
+configureSignal(signal: SIGINT) {
   print("stopping run loop")
   CFRunLoopStop(loop)
 }
-intSource.activate()
 
 CFRunLoopRun()
 
