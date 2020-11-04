@@ -14,7 +14,7 @@ func configureSignal(signal _signal: Int32, handler: @escaping () -> Void) {
     signalSources.updateValue(signalSource, forKey: _signal)
 }
 
-let port = CGEvent.tapCreate(
+guard let port = CGEvent.tapCreate(
     tap: .cgSessionEventTap,
     place: .tailAppendEventTap,
     options: .defaultTap,
@@ -34,9 +34,7 @@ let port = CGEvent.tapCreate(
         return Unmanaged.passUnretained(event)
     },
     userInfo: nil
-)
-
-guard let port = port else {
+) else {
     print("can't create tap")
     exit(EXIT_FAILURE)
 }
