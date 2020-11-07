@@ -6,4 +6,4 @@ Effectively this reverses the annoying coupling of mouse and trackpad `Scroll di
 
 ## Building
 
-`swiftc au-naturel.swift`
+`swiftc -target x86_64-apple-darwin18 au-naturel.swift`
