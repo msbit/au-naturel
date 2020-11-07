@@ -1,6 +1,8 @@
 import CoreGraphics
 import Darwin
 
+var signalSources: [Int32: DispatchSourceSignal] = [:]
+
 func reverseDeltas(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent, refcon: UnsafeMutableRawPointer?) -> Unmanaged<CGEvent>? {
   let isContinuous = event.getIntegerValueField(.scrollWheelEventIsContinuous)
   if isContinuous == 1 { return Unmanaged.passUnretained(event) }
@@ -15,8 +17,6 @@ func reverseDeltas(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent, re
 
   return Unmanaged.passUnretained(event)
 }
-
-var signalSources: [Int32: DispatchSourceSignal] = [:]
 
 func configureSignal(signal _signal: Int32, handler: @escaping () -> Void) {
     signal(_signal, SIG_IGN)
