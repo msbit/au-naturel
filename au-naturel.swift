@@ -29,6 +29,11 @@ func configureSignal(signal _signal: Int32, handler: @escaping () -> Void) {
     signalSources.updateValue(signalSource, forKey: _signal)
 }
 
+guard #available(macOS 10.14, *) else {
+    print("no need to run on macOS before 10.14")
+    exit(EXIT_FAILURE)
+}
+
 guard let loop = CFRunLoopGetCurrent() else {
     print("can't get current loop")
     exit(EXIT_FAILURE)
