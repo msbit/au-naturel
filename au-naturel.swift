@@ -1,19 +1,32 @@
 import CoreGraphics
 import Darwin
 
+extension CGEvent {
+  func negateIntegerValueFields(_ fields: CGEventField...) {
+    var values: [CGEventField: Int64] = [:]
+    for field in fields {
+      values[field] = getIntegerValueField(field)
+    }
+
+    for field in fields {
+      guard let value = values[field] else { continue }
+
+      setIntegerValueField(field, value: -value)
+    }
+  }
+}
+
 var signalSources: [Int32: DispatchSourceSignal] = [:]
 
 func reverseDeltas(_: CGEventTapProxy, _: CGEventType, event: CGEvent, _: UnsafeMutableRawPointer?) -> Unmanaged<CGEvent>? {
     let isContinuous = event.getIntegerValueField(.scrollWheelEventIsContinuous)
     if isContinuous == 1 { return Unmanaged.passUnretained(event) }
 
-    let pointDelta = event.getIntegerValueField(.scrollWheelEventPointDeltaAxis1)
-    let delta = event.getIntegerValueField(.scrollWheelEventDeltaAxis1)
-    let fixedPtDelta = event.getIntegerValueField(.scrollWheelEventFixedPtDeltaAxis1)
-
-    event.setIntegerValueField(.scrollWheelEventPointDeltaAxis1, value: -pointDelta)
-    event.setIntegerValueField(.scrollWheelEventDeltaAxis1, value: -delta)
-    event.setIntegerValueField(.scrollWheelEventFixedPtDeltaAxis1, value: -fixedPtDelta)
+    event.negateIntegerValueFields(
+      .scrollWheelEventPointDeltaAxis1,
+      .scrollWheelEventDeltaAxis1,
+      .scrollWheelEventFixedPtDeltaAxis1
+    )
 
     return Unmanaged.passUnretained(event)
 }
