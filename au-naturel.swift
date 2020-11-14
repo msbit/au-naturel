@@ -39,7 +39,7 @@ func configureSignal(signal _signal: Int32, handler: @escaping () -> Void) {
     signalSource.setEventHandler(handler: handler)
     signalSource.activate()
 
-    signalSources.updateValue(signalSource, forKey: _signal)
+    signalSources[_signal] = signalSource
 }
 
 guard #available(macOS 10.14, *) else {
