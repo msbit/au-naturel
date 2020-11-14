@@ -19,14 +19,13 @@ extension CGEvent {
 var signalSources: [Int32: DispatchSourceSignal] = [:]
 
 func reverseDeltas(_: CGEventTapProxy, _: CGEventType, event: CGEvent, _: UnsafeMutableRawPointer?) -> Unmanaged<CGEvent>? {
-    let isContinuous = event.getIntegerValueField(.scrollWheelEventIsContinuous)
-    if isContinuous == 1 { return Unmanaged.passUnretained(event) }
-
-    event.negateIntegerValueFields(
-      .scrollWheelEventPointDeltaAxis1,
-      .scrollWheelEventDeltaAxis1,
-      .scrollWheelEventFixedPtDeltaAxis1
-    )
+    if event.getIntegerValueField(.scrollWheelEventIsContinuous) == 0 {
+      event.negateIntegerValueFields(
+        .scrollWheelEventPointDeltaAxis1,
+        .scrollWheelEventDeltaAxis1,
+        .scrollWheelEventFixedPtDeltaAxis1
+      )
+    }
 
     return Unmanaged.passUnretained(event)
 }
